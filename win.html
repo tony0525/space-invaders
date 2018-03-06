@@ -1,0 +1,37 @@
+<!DOCTYPE HTML> 
+<html> 
+<head>
+<title>Space Invader</title>
+<audio src="navbgmu.mp3" autoplay loop></audio>
+
+</head>
+<body> 
+
+ <canvas id="e" width="800" height="800" tabindex="0" style="border:1px solid #c3c3c3;">
+ Your browser does not support the canvas element. 
+ </canvas> 
+<script type="text/javascript"> 
+var canvas = document.getElementById("e"); 
+
+var cxt = canvas.getContext("2d"); 
+var p3=new Image();
+p3.src="invaders.png";
+p3.onload=function(){
+cxt.drawImage(p3,0,0,800,800);
+cxt.fillStyle="white";
+cxt.font='35px AR DESTINE';
+cxt.fillText("You Win the Game!!!",120,200);
+cxt.font='30px AR DESTINE';
+cxt.fillText("You may try the Level 2~",100,250);
+window.setTimeout(jump, 3000);
+}
+
+function jump(){
+	window.location = "navpage.html";
+}
+
+
+
+</script> 
+</body> 
+</html> 

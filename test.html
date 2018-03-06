@@ -1,0 +1,75 @@
+
+
+
+<!DOCTYPE HTML>
+
+<html>
+
+<body>
+
+
+
+<canvas id="e" width="300" height="300" style="border:1px solid #c3c3c3;">
+
+Your browser does not support the canvas element.
+
+</canvas>
+
+
+
+<script>
+
+  var canvas = document.getElementById("e");
+
+  var cxt = canvas.getContext("2d");
+
+	
+
+  var hehe = 	[	[1,1,1],
+
+						[1,0,1],
+
+						[0,1,0]		];
+
+						
+
+  var cellSize = 100;
+
+						
+
+
+
+
+
+  for(var i in hehe){
+
+	  
+
+	for (var j in hehe[i]){
+
+		
+
+		if (hehe[i][j] == 1){
+
+			cxt.fillStyle="#DDDDDD";
+
+			cxt.fillRect(i*cellSize,j*cellSize,100,100);
+
+		}	
+
+	}
+
+
+
+  }
+
+
+
+ 
+
+</script>
+
+</body>
+
+</html>
+

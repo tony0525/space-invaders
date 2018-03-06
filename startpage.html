@@ -1,0 +1,37 @@
+<!DOCTYPE HTML> 
+<html> 
+<head>
+<title>Space Invader</title>
+<audio src="menubg.mp3" autoplay loop></audio>
+</head>
+<body> 
+ <canvas id="e" width="800" height="800" tabindex="0" style="border:1px solid #c3c3c3;">
+ Your browser does not support the canvas element. 
+ </canvas> 
+<script type="text/javascript"> 
+var canvas = document.getElementById("e"); 
+canvas.addEventListener("keydown",doKeyDown,true);
+var cxt = canvas.getContext("2d"); 
+var p3=new Image();
+p3.src="invaders.png";
+p3.onload=function(){
+cxt.drawImage(p3,0,0,800,800);
+cxt.fillStyle="white";
+cxt.font='15px AR DESTINE';
+if (sessionStorage.pagecount){sessionStorage.pagecount=Number(sessionStorage.pagecount) +1;}
+else{sessionStorage.pagecount=1;}
+cxt.fillText("This is your NO. " + sessionStorage.pagecount + " time(s) to play the Space Invader.",200,200);
+cxt.font='45px AR DESTINE';
+cxt.fillText('Welcome to Space Invader',60,150);
+cxt.font='30px AR DESTINE';
+cxt.fillText('Press S to Start',250,250);
+}
+function doKeyDown(e) {
+if (e.keyCode == 83) {window.location = "navpage.html";}}
+
+
+
+</script> 
+</body> 
+</html> 
+

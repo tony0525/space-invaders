@@ -1,0 +1,576 @@
+<!DOCTYPE HTML> 
+<html> 
+<head>
+<title>Space Invader</title>
+<audio id="shoot" src="shoot.wav"></audio>
+<audio id="explosion" src="explosion.wav"></audio>
+<audio id="invaderkilled" src="invaderkilled.wav"></audio>
+
+
+</head>
+<body> 
+ <canvas id="e" width="800" height="800" tabindex="0" style="border:1px solid #c3c3c3; bgcolor: red">
+ Your browser does not support the canvas element. 
+ </canvas> 
+<script type="text/javascript"> 
+var canvas = document.getElementById("e"); 
+canvas.addEventListener( "keydown", doKeyDown, true);
+var cxt = canvas.getContext("2d"); 
+var monster=[];
+var obstacle=[];
+var spaceship={x:300, y:710};
+var obstacle_life_time=[];
+var att1=[];
+var att2=[];
+var temprownum;
+var score=0;
+var lifetime=2;
+var atkcounter=0;
+var scorechanged=false;
+var changed=false;
+var moved=false;
+var timeCounter=1.0;
+var time;
+var timecount;
+var started=false;
+var obnum=Math.floor(1+Math.random()*4); //define how many obstacles
+var movearea=1;
+var myinter;
+
+function doKeyDown(e) {
+
+	if (e.keyCode == 83&&!started) {
+	started=true;
+	cxt.fillStyle="black";
+	cxt.fillRect(100,250,600,80); 
+	init();
+	myinter =setInterval(draw,1); 
+	timerInit();
+	//setInterval(timerInit,1000); 
+	}
+	
+	
+	if (e.keyCode ==38){
+	att1.push({x:spaceship.x+25,y:spaceship.y+30});
+	document.getElementById('shoot').play();
+	}
+	/*function attf(){
+	
+	if(timeCounter2%2==0){
+	cxt.fillStyle="black";
+	cxt.fillRect(mainChar[0]*60+115,att[0]*20+20,1,30); //clean att now
+	
+	cxt.fillStyle="white";
+	cxt.fillRect(mainChar[0]*60+115,att[0]*20,1,10);} //new att
+	
+	if(att[0]<5){
+	att[0]=35;
+	cxt.fillStyle="black";
+	cxt.fillRect(mainChar[0]*60+115,4*20,1,10);
+	}
+	
+	else{att[0]-=1;}
+	timeCounter2+=1;
+	
+	}
+	setInterval(attf,1);
+	var refresh=setInterval(attf,1);
+	clearInterval(refresh);
+	}
+	*/
+	
+	if (e.keyCode == 37) {
+	if(spaceship.x>25){
+	spaceship.x-=5;
+	moved=true;
+}}
+	
+	if (e.keyCode == 39) {
+	if(spaceship.x<710){
+	spaceship.x+=5;
+	moved=true;
+}}
+
+	if(e.keyCode==82){location.reload();}
+}
+
+
+function init(){
+	
+	for(var i=0; i<105;i++){
+		time=200;
+		var date= new Date();
+		timecount=date.getTime();
+		var xCoor;
+		var yCoor;
+		var mtype;
+		var rownumber;
+		if(i<15){
+			xCoor=155+i*35;
+			yCoor=105;
+			mtype=1;
+			rownumber=7;}
+		else if(i<30){
+			xCoor=155+(i-15)*35;
+			yCoor=140;
+			mtype=2;
+			rownumber=6;}
+		else if(i<45){
+			xCoor=155+(i-30)*35;
+			yCoor=175;
+			mtype=3;
+			rownumber=5;}
+		else if(i<60){
+			xCoor=155+(i-45)*35;
+			yCoor=210;
+			mtype=1;
+			rownumber=4;}
+		else if(i<75){
+			xCoor=155+(i-60)*35;
+			yCoor=245;
+			mtype=2;
+			rownumber=3;}
+		else if(i<90){
+			xCoor=155+(i-75)*35;
+			yCoor=280;
+			mtype=3;
+			rownumber=2;}
+		else{
+			xCoor=155+(i-90)*35;
+			yCoor=315;
+			mtype=1;
+			rownumber=1;}
+		monster.push({x: xCoor,y: yCoor,type: mtype,rownum:rownumber});
+}
+	
+	for(var i=0; i<obnum; i++){
+		var xCoor=i*150+100;
+		var yCoor=505;
+		var ob_life=3;
+		obstacle.push({x:xCoor,y:yCoor,ob_life:ob_life});
+	}
+	//att1.push({x:125,y:300});
+	//att1.push({x:225,y:300});
+}
+
+function timerInit(){
+	
+	cxt.fillStyle="black";
+	cxt.fillRect(330,30,100,40);
+	cxt.font='35px AR DESTINE';
+	cxt.fillStyle="white";
+	cxt.fillText(time,340,60);
+	
+}
+function lose(){
+	clearInterval(myinter);
+	window.location = "lose.html";
+	}
+
+function win(){
+	clearInterval(myinter);
+	window.location = "win.html";
+}
+	
+function draw(){
+	if(lifetime==0){lose();}
+	if(monster.length==0){win();}
+	//if(score==)
+	var date = new Date();
+	if(timecount+1000<date.getTime()){
+		timecount+=1000;
+		time--;
+		cxt.fillStyle="black";
+		cxt.fillRect(330,30,100,40);
+		cxt.font='35px AR DESTINE';
+		cxt.fillStyle="white";
+		cxt.fillText(time,340,60);
+		//alert("1");
+		if(time<1){
+		win();
+		
+		}
+		if(time%2==0){
+			cxt.fillStyle="black";
+			cxt.fillRect(50,100,700,250);
+			for(var i=0;i<monster.length;i++){
+			monster[i].x+=50;}
+		}
+		else if(time%2!=0){
+			cxt.fillStyle="black";
+			cxt.fillRect(50,100,700,250);
+			for(var i=0;i<monster.length;i++){
+			monster[i].x-=50;}
+		}
+	
+		if(time==150){
+		cxt.fillStyle="black";
+		cxt.fillRect(50,100,700,250);
+		for(var i=0;i<monster.length;i++){
+		monster[i].y+=50;
+		}}
+		
+		if(time==100){
+		cxt.fillStyle="black";
+		cxt.fillRect(50,100,700,250);
+		for(var i=0;i<monster.length;i++){
+		monster[i].y+=100;
+		}}
+		
+	}
+	
+	
+	
+	if(scorechanged){
+		if(temprownum==1)
+		score=score+10;
+		if(temprownum==2)
+		score=score+20;
+		if(temprownum==3)
+		score=score+30;
+		if(temprownum==4)
+		score=score+40;
+		if(temprownum==5)
+		score=score+50;
+		if(temprownum==6)
+		score=score+60;
+		if(temprownum==5)
+		score=score+70;
+		cxt.font='15px AR DESTINE';
+		cxt.fillStyle="black";
+		cxt.fillRect(700,40,60,25);
+		cxt.fillStyle="white";
+		cxt.fillText(score,700,60);
+		scorechanged=false;
+	}
+	if(changed){
+		cxt.font='15px AR DESTINE';
+		cxt.fillStyle="black";
+		cxt.fillRect(40,780,100,40);
+		cxt.fillStyle="white";
+		cxt.fillText('Life : '+lifetime,40,790);
+		changed=false;
+	}
+	var atker=[];
+	var occupied = false;
+	for(var i=monster.length-1;i>=0;i--){
+		for(var j=0;j<atker.length&&!occupied;j++)
+			if(atker[j].x==monster[i].x)
+				occupied=true;
+		if(occupied)
+			occupied=false;
+		else
+			atker.push(monster[i]);
+	}
+	
+	
+	if(atkcounter<250)
+		atkcounter++;
+	else{
+		atkcounter=0;
+		var atkpos=Math.floor(Math.random()*atker.length);
+		att2.push({x: atker[atkpos].x+12, y:atker[atkpos].y+25});
+		
+	}
+	
+	
+	
+	var tempfire=[];
+	for(var i=0;i<att2.length;i++){
+			if(att2[i].y<760){
+			
+				cxt.strokeStyle="white";
+				cxt.beginPath();
+				cxt.moveTo(att2[i].x, att2[i].y);
+				cxt.lineTo(att2[i].x, att2[i].y+12);
+				cxt.stroke();
+				
+				cxt.strokeStyle="black";
+				cxt.beginPath();
+				cxt.lineWidth= 2;
+				cxt.moveTo(att2[i].x, att2[i].y-1);
+				cxt.lineTo(att2[i].x, att2[i].y-1+1);
+				cxt.stroke();
+				
+				att2[i].y++;
+
+				if((att2[i].x>=spaceship.x&&att2[i].x<=spaceship.x+50)&&(att2[i].y>=spaceship.y&&att2[i].y<=spaceship.y+50)){
+					document.getElementById('explosion').play();
+					cxt.strokeStyle="black";
+					cxt.beginPath();
+					cxt.lineWidth= 2;
+					cxt.moveTo(att2[i].x, att2[i].y-1);
+					cxt.lineTo(att2[i].x, att2[i].y-1+12);
+					cxt.stroke();
+					tempfire.push(i); 
+
+					lifetime--;
+					changed=true;
+					
+				}
+				
+			}
+			else{
+				
+				cxt.strokeStyle="black";
+				cxt.beginPath();
+				cxt.lineWidth= 2;
+				cxt.moveTo(att2[i].x, att2[i].y-1);
+				cxt.lineTo(att2[i].x, att2[i].y-1+12);
+				cxt.stroke();
+				tempfire.push(i); 
+			}
+			
+	}
+	while(tempfire.length>0){
+		//alert(tempfire.length);
+		att2.splice(tempfire.pop(),1);
+		//alert(tempfire.length);
+	}
+
+	//alert(atker.length);
+	
+	if(moved){
+	cxt.fillStyle="black";
+	cxt.fillRect(25,720,740,50); //clean gun
+	moved=false;
+	}
+	
+	var mon1=new Image();
+	mon1.src="monster1.gif";
+	var mon2=new Image();
+	mon2.src="monster2.gif";
+	var mon3=new Image();
+	mon3.src="monster3.gif";
+
+	for(var i=0;i<monster.length;i++){
+		if(monster[i].type==1)
+			cxt.drawImage(mon1,monster[i].x,monster[i].y,25,25);
+		else if(monster[i].type==2)
+			cxt.drawImage(mon2,monster[i].x,monster[i].y,25,25);
+		else if(monster[i].type==3)
+			cxt.drawImage(mon3,monster[i].x,monster[i].y,25,25);
+	}
+	
+	
+	/*mon1.onload=function(){
+	for(var i=105;i<700;i+=55){cxt.drawImage(mon1,i,105,25,25);} //line1
+	for(var i=105;i<700;i+=55){cxt.drawImage(mon1,i,210,25,25);}} 
+	mon2.onload=function(){
+	for(var i=105;i<700;i+=55){cxt.drawImage(mon2,i,140,25,25);}
+	for(var i=105;i<700;i+=55){cxt.drawImage(mon2,i,245,25,25);}}
+	mon3.onload=function(){
+	for(var i=105;i<700;i+=55){cxt.drawImage(mon3,i,175,25,25);}}*/
+	
+	var ob=new Image();
+	ob.src="obstacle.png";
+	var ob2=new Image();
+	ob2.src="obstacle1.png";
+	var ob3=new Image();
+	ob3.src="obstacle2.png";
+	for(var i=0;i<obstacle.length;i++){
+		if(obstacle[i].ob_life==3)
+		cxt.drawImage(ob,obstacle[i].x,obstacle[i].y,100,100);
+	}
+	var tempobstacle=[];
+	for(var j=0;j<obstacle.length;j++){
+	for(var i=0;i<att2.length;i++){
+			if((att2[i].x>=obstacle[j].x&&att2[i].x<=obstacle[j].x+100)&&(att2[i].y>=obstacle[j].y&&att2[i].y<=obstacle[j].y+100)){
+			
+			obstacle[j].ob_life--;
+			cxt.strokeStyle="black";
+			cxt.beginPath();
+			cxt.lineWidth= 2;
+			cxt.moveTo(att2[i].x, att2[i].y-1);
+			cxt.lineTo(att2[i].x, att2[i].y-1+12);
+			cxt.stroke();
+			tempfire.push(i);
+			cxt.fillStyle="black";
+			cxt.fillRect(obstacle[j].x,obstacle[j].y,100,100);	
+			if(obstacle[j].ob_life==3){
+			cxt.drawImage(ob,obstacle[j].x,obstacle[j].y,100,100);}
+			if(obstacle[j].ob_life==2)
+			cxt.drawImage(ob2,obstacle[j].x,obstacle[j].y,100,100);
+			if(obstacle[j].ob_life==1)
+			cxt.drawImage(ob3,obstacle[j].x,obstacle[j].y,100,100);
+			if(obstacle[j].ob_life==0){
+				tempobstacle.push(j);
+			}
+			}
+		}
+	}
+	while(tempfire.length>0){
+		//alert(tempfire.length);
+		att2.splice(tempfire.pop(),1);
+		//alert(tempfire.length);
+	}
+	while(tempobstacle.length>0){
+		//alert(tempfire.length);
+		obstacle.splice(tempobstacle.pop(),1);
+		//alert(tempfire.length);
+	}
+	
+	var tempbullet=[];
+	
+	for(var j=0;j<obstacle.length;j++){
+	for(var i=0;i<att1.length;i++){
+			if((att1[i].x>=obstacle[j].x&&att1[i].x<=obstacle[j].x+100)&&(att1[i].y>=obstacle[j].y&&att1[i].y<=obstacle[j].y+100)){
+			
+			obstacle[j].ob_life--;
+			cxt.strokeStyle="black";
+			cxt.beginPath();
+			cxt.lineWidth= 2;
+			cxt.moveTo(att1[i].x, att1[i].y-1);
+			cxt.lineTo(att1[i].x, att1[i].y-1+12);
+			cxt.stroke();
+			tempbullet.push(i);
+			cxt.fillStyle="black";
+			cxt.fillRect(obstacle[j].x,obstacle[j].y,100,100);
+			if(obstacle[j].ob_life==3){
+			cxt.drawImage(ob,obstacle[j].x,obstacle[j].y,100,100);}
+			if(obstacle[j].ob_life==2)
+			cxt.drawImage(ob2,obstacle[j].x,obstacle[j].y,100,100);
+			if(obstacle[j].ob_life==1)
+			cxt.drawImage(ob3,obstacle[j].x,obstacle[j].y,100,100);
+			if(obstacle[j].ob_life==0){
+				tempobstacle.push(j);
+			}
+			}
+		}
+	}
+	while(tempbullet.length>0){
+		//alert(tempfire.length);
+		att1.splice(tempbullet.pop(),1);
+		//alert(tempfire.length);
+	}
+	while(tempobstacle.length>0){
+		//alert(tempfire.length);
+		obstacle.splice(tempobstacle.pop(),1);
+		//alert(tempfire.length);
+	}
+	
+	//var bullet=new Image();
+	//bullet.src="bullet.png";
+	for(var i=0; i<att1.length;i++){
+		if(att1[i].y>100){
+			cxt.strokeStyle="white";
+			cxt.beginPath();
+			cxt.moveTo(att1[i].x, att1[i].y);
+			cxt.lineTo(att1[i].x, att1[i].y-12);
+			cxt.stroke();
+			
+			//alert("asd");
+			cxt.strokeStyle="black";
+			cxt.beginPath();
+			cxt.moveTo(att1[i].x, att1[i].y+1);
+			cxt.lineTo(att1[i].x, att1[i].y+1+12);
+			cxt.stroke();			
+			att1[i].y--;
+			for(var j=0;j<monster.length;j++){
+				if((att1[i].x>=monster[j].x&&att1[i].x<=monster[j].x+25)&&(att1[i].y>=monster[j].y&&att1[i].y<=monster[j].y+25)){
+					document.getElementById('invaderkilled').play();
+					scorechanged=true;
+					temprownum=monster[j].rownum;
+					cxt.strokeStyle="black";
+					cxt.lineWidth= 2;
+					cxt.beginPath();
+					cxt.moveTo(att1[i].x, att1[i].y+12);
+					cxt.lineTo(att1[i].x, att1[i].y+1-12);
+					cxt.stroke();
+					tempbullet.push(i); 
+					cxt.fillStyle="black";
+					cxt.fillRect(monster[j].x,monster[j].y,25,25);
+					monster.splice(j,1);
+					//alert(atker.length);
+				}
+			}
+			
+		}
+		else {
+			//alert("asd");
+			//alert("saddas");
+			cxt.strokeStyle="black";
+			cxt.lineWidth= 2;
+			cxt.beginPath();
+			cxt.moveTo(att1[i].x, att1[i].y+12);
+			cxt.lineTo(att1[i].x, att1[i].y+1-12);
+			cxt.stroke();
+			tempbullet.push(i);   //mark down the bullet that reached the edge
+			}
+	}
+	
+	while(tempbullet.length>0){
+		att1.splice(tempbullet.pop(),1);
+	}
+	
+	/*for(var j=0;j<att2.length;j++){
+	for(var i=0;i<att1.length;i++){
+		if((att1[i].x>=att2[j].x&&att1[i].x<=att2[j].x+50)&&(att1[i].y>=att2[j].y&&att1[i].y<=att2[j].y+50)){
+		cxt.strokeStyle="black";
+			cxt.beginPath();
+			cxt.lineWidth= 2;
+			cxt.moveTo(att1[i].x, att1[i].y-1);
+			cxt.lineTo(att1[i].x, att1[i].y-1+12);
+			cxt.stroke();
+			tempbullet.push(i);
+			cxt.strokeStyle="black";
+			cxt.beginPath();
+			cxt.lineWidth= 2;
+			cxt.moveTo(att2[j].x, att2[j].y-1);
+			cxt.lineTo(att2[j].x, att2[j].y-1+12);
+			cxt.stroke();
+			tempfire.push(j);
+			}}}
+	while(tempfire.length>0){
+		//alert(tempfire.length);
+		att2.splice(tempfire.pop(),1);
+		//alert(tempfire.length);
+	}
+	while(tempbullet.length>0){
+		att1.splice(tempbullet.pop(),1);
+	}*/
+	
+	
+	/*var ob=new Image();
+	ob.src="obstacle.png";
+	ob.onload=function(){
+	for(var i=0;i<obnum;i+=1){cxt.drawImage(ob,i*150+150,505,90,90);}}*/
+	
+	if(timeCounter%2==0){
+	var gun=new Image();
+	gun.src="att.bmp";
+	gun.onload=function(){cxt.drawImage(gun,spaceship.x,spaceship.y);}
+	}
+
+ 
+ timeCounter+=1;
+ }
+
+
+var p1=new Image();
+p1.src="icon.gif";
+cxt.fillStyle="black";
+cxt.fillRect(0,0,800,800); 
+cxt.fillStyle="white";
+cxt.font='35px AR DESTINE';
+cxt.fillText("Please press S to start the Game",100,300);
+cxt.font='15px AR DESTINE';
+cxt.fillText('Level 2 ',60,60);
+cxt.fillText('Time : ',280,60);
+cxt.fillText('Score',650,60);
+cxt.fillText(score,700,60);
+p1.onload=function(){  //bg image
+for(var i=0; i<760;i+=50){cxt.drawImage(p1,0,i,25,25);}
+for(var a=0; a<760;a+=50){cxt.drawImage(p1,770,a,25,25);}
+for(var b=0; b<751;b+=50){cxt.drawImage(p1,b,0,25,25);}
+for(var d=25; d<801;d+=50){cxt.drawImage(p1,0,d,25,25);}
+for(var e=25; e<801;e+=50){cxt.drawImage(p1,770,e,25,25);}
+for(var f=25; f<751;f+=50){cxt.drawImage(p1,f,0,25,25);}
+}
+cxt.fillStyle="##ddf1ff";
+cxt.fillText('_______________________________________________________________________',35,770);
+cxt.fillText('Life : '+lifetime,40,790);
+cxt.fillText("You can press R anytime to reset the game",200,790);
+</script> 
+</body> 
+</html> 
